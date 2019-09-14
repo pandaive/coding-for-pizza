@@ -4,13 +4,13 @@ from simple_pid import PID
 import time
 
 class AngleRegulator:
-    pid = PID(1/360, 0.1, 0.05, setpoint=0)
+    pid = PID(1/360 / 10, 0.1, 0.05, setpoint=0)
 
 
     target = 0
     direction = "stop"
 
-    delta = 0.5  # degrees
+    delta = 10  # degrees
 
     def __init__(self):
         maxSpeed = 1# 5
