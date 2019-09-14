@@ -2,18 +2,18 @@ import numpy as np
 import cv2# as cv
 import math
 #import matplotlib.pyplot as plt
-img1 = cv2.imread('../images/output1out5.png', cv2.IMREAD_COLOR)
-gray = cv2.cvtColor(img1, cv2.COLOR_BGR2GRAY)
+
+
 
 
 
 def findCircle(img):
-    gray = cv2.cvtColor(img1, cv2.COLOR_BGR2GRAY)
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
     height = np.size(img, 0)
     width = np.size(img, 1)
     dw = 300
-    resized = cv2.resize(img, (dw, int(dw/width * height)))
+    resized = cv2.resize(gray, (dw, int(dw/width * height)))
 
     coeff = width / dw
 
@@ -54,9 +54,7 @@ def findColor(img, lower, upper):
 
     kernal = np.ones((5 ,5), "uint8")
     dilated=cv2.dilate(in_range, kernal)
-    res=cv2.bitwise_and(img1, img1, mask = dilated)
-
-    #cv2.imshow("", res)
+    #res=cv2.bitwise_and(img, img, mask = dilated)
 
     (_, contours, hierarchy) = cv2.findContours(in_range, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
     max_x = 0
@@ -73,63 +71,67 @@ def findColor(img, lower, upper):
 
     return max_x, max_y
 
-#magenta_lower = np.array([22,60,200],np.uint8)
-#magenta_upper = np.array([60,255,255],np.uint8)
-green_lower = np.array([50, 60, 60], np.uint8)
-green_upper = np.array([80, 150, 150], np.uint8)
 
-magenta_lower = np.array([150, 100, 30],np.uint8)
-magenta_upper = np.array([165, 500, 500],np.uint8)
+def get_angle(img):
+    #gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
+    #magenta_lower = np.array([22,60,200],np.uint8)
+    #magenta_upper = np.array([60,255,255],np.uint8)
+    green_lower = np.array([50, 60, 60], np.uint8)
+    green_upper = np.array([80, 150, 150], np.uint8)
 
-sens = 70
-white_lower = np.array([0,0,255-sens], np.uint8)
-white_upper = np.array([255,sens,255], np.uint8)
-
-resized, circle = findCircle(gray)
-x, y, r = (int(x) for x in circle)
-
-height,width,depth = img1.shape
-circle_img = np.zeros((height,width), np.uint8)
-cv2.circle(circle_img,(x,y),r,1,thickness=-1)
-
-masked_data = cv2.bitwise_and(img1, img1, mask=circle_img)
-#masked_data = img1
+    magenta_lower = np.array([150, 100, 30],np.uint8)
+    magenta_upper = np.array([165, 500, 500],np.uint8)
 
 
+    sens = 70
+    white_lower = np.array([0,0,255-sens], np.uint8)
+    white_upper = np.array([255,sens,255], np.uint8)
 
-#cv2.circle(img1, (x, y), r, (0, 255, 0), 4)
-#cv2.rectangle(img1, (x - 5, y - 5), (x + 5, y + 5), (0, 128, 255), -1)
+    resized, circle = findCircle(img)
+    x, y, r = (int(x) for x in circle)
 
-masked_data_hsv = cv2.cvtColor(masked_data, cv2.COLOR_BGR2HSV)
+    height,width,depth = img.shape
+    circle_img = np.zeros((height,width), np.uint8)
+    cv2.circle(circle_img,(x,y),r,1,thickness=-1)
 
-g_rect = findColor(masked_data_hsv, green_lower, green_upper)
+    masked_data = cv2.bitwise_and(img, img, mask=circle_img)
 
-m_rect = findColor(masked_data_hsv, magenta_lower, magenta_upper)
+    masked_data_hsv = cv2.cvtColor(masked_data, cv2.COLOR_BGR2HSV)
 
-w_rect = findColor(masked_data_hsv, white_lower, white_upper)
+    g_rect = findColor(masked_data_hsv, green_lower, green_upper)
 
-y_m_d = m_rect[1] - y
-x_m_d =  m_rect[0] - x
-m_angle = math.atan2(y_m_d,x_m_d) * 360 / (2*math.pi)
-m_angle =  360 - (-m_angle) + 90
-print("y {} x {} angle {}".format(y_m_d, x_m_d, m_angle))
+    m_rect = findColor(masked_data_hsv, magenta_lower, magenta_upper)
 
-y_g_d = g_rect[1] - y
-x_g_d = g_rect[0] - x
-g_angle = math.atan2(y_g_d,x_g_d) * 360 / (2*math.pi)
-#g_angle =  g_angle - 90
-#g_angle = g_angle % 360
-g_angle = 360 - (-g_angle) + 90
-print("y {} x {} angle {}".format(y_g_d, x_g_d, g_angle))
+    w_rect = findColor(masked_data_hsv, white_lower, white_upper)
 
-cv2.rectangle(masked_data, (g_rect[0], g_rect[1]), (g_rect[0]+10, g_rect[1]+10), (255, 0, 0), 3)
-cv2.rectangle(masked_data, (m_rect[0], m_rect[1]), (m_rect[0]+10, m_rect[1]+10), (255, 0, 0), 3)
-cv2.rectangle(masked_data, (w_rect[0], w_rect[1]), (w_rect[0]+10, w_rect[1]+10), (255, 0, 0), 3)
+    y_m_d = m_rect[1] - y
+    x_m_d =  m_rect[0] - x
+    m_angle = math.atan2(y_m_d,x_m_d) * 360 / (2*math.pi)
+    m_angle = 360 - (-m_angle) + 90
+    #print("y {} x {} angle {}".format(y_m_d, x_m_d, m_angle))
 
-cv2.namedWindow("Color Tracking1")
-cv2.imshow("Color Tracking1", masked_data)
+    y_g_d = g_rect[1] - y
+    x_g_d = g_rect[0] - x
+    g_angle = math.atan2(y_g_d,x_g_d) * 360 / (2*math.pi)
+    g_angle = 360 - (-g_angle) + 90
 
-#cv2.namedWindow("Color Tracking")
-#cv2.imshow("Color Tracking", res)
-cv2.waitKey()
+    # print("y {} x {} angle {}".format(y_g_d, x_g_d, g_angle))
+    #
+    # cv2.rectangle(masked_data, (g_rect[0], g_rect[1]), (g_rect[0]+10, g_rect[1]+10), (255, 0, 0), 3)
+    # cv2.rectangle(masked_data, (m_rect[0], m_rect[1]), (m_rect[0]+10, m_rect[1]+10), (255, 0, 0), 3)
+    # cv2.rectangle(masked_data, (w_rect[0], w_rect[1]), (w_rect[0]+10, w_rect[1]+10), (255, 0, 0), 3)
+    #
+    # cv2.namedWindow("Color Tracking1")
+    # cv2.imshow("Color Tracking1", masked_data)
+
+    #cv2.namedWindow("Color Tracking")
+    #cv2.imshow("Color Tracking", res)
+    #cv2.waitKey()
+
+    return g_angle - 180 - m_angle
+
+
+image = cv2.imread('../images/output1out1.png', cv2.IMREAD_COLOR)
+
+print(get_angle(image))
