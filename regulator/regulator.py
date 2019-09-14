@@ -13,7 +13,7 @@ class AngleRegulator:
     delta = 0.5  # degrees
 
     def __init__(self):
-        maxSpeed = None# 5
+        maxSpeed = 1# 5
         self.pid.output_limits = (0, maxSpeed)
         self.pid.sample_time = 0.05
 

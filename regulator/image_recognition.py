@@ -118,9 +118,9 @@ def get_angle(img):
 
     # print("y {} x {} angle {}".format(y_g_d, x_g_d, g_angle))
     #
-    # cv2.rectangle(masked_data, (g_rect[0], g_rect[1]), (g_rect[0]+10, g_rect[1]+10), (255, 0, 0), 3)
-    # cv2.rectangle(masked_data, (m_rect[0], m_rect[1]), (m_rect[0]+10, m_rect[1]+10), (255, 0, 0), 3)
-    # cv2.rectangle(masked_data, (w_rect[0], w_rect[1]), (w_rect[0]+10, w_rect[1]+10), (255, 0, 0), 3)
+    cv2.rectangle(masked_data, (g_rect[0], g_rect[1]), (g_rect[0]+10, g_rect[1]+10), (255, 0, 0), 3)
+    cv2.rectangle(masked_data, (m_rect[0], m_rect[1]), (m_rect[0]+10, m_rect[1]+10), (255, 0, 0), 3)
+    cv2.rectangle(masked_data, (w_rect[0], w_rect[1]), (w_rect[0]+10, w_rect[1]+10), (255, 0, 0), 3)
     #
     # cv2.namedWindow("Color Tracking1")
     # cv2.imshow("Color Tracking1", masked_data)
@@ -129,9 +129,10 @@ def get_angle(img):
     #cv2.imshow("Color Tracking", res)
     #cv2.waitKey()
 
-    return g_angle - 180 - m_angle
+    return g_angle - 180 - m_angle, masked_data
 
 
-image = cv2.imread('../images/output1out1.png', cv2.IMREAD_COLOR)
+if __name__ == "__main__":
+    image = cv2.imread('../images/output1out1.png', cv2.IMREAD_COLOR)
 
-print(get_angle(image))
+    print(get_angle(image))
