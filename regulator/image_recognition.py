@@ -1,7 +1,8 @@
 import numpy as np
 import cv2# as cv
+import math
 #import matplotlib.pyplot as plt
-img1 = cv2.imread('../images/output1out1.png', cv2.IMREAD_COLOR)
+img1 = cv2.imread('../images/output1out5.png', cv2.IMREAD_COLOR)
 gray = cv2.cvtColor(img1, cv2.COLOR_BGR2GRAY)
 
 
@@ -107,6 +108,20 @@ g_rect = findColor(masked_data_hsv, green_lower, green_upper)
 m_rect = findColor(masked_data_hsv, magenta_lower, magenta_upper)
 
 w_rect = findColor(masked_data_hsv, white_lower, white_upper)
+
+y_m_d = m_rect[1] - y
+x_m_d =  m_rect[0] - x
+m_angle = math.atan2(y_m_d,x_m_d) * 360 / (2*math.pi)
+m_angle =  360 - (-m_angle) + 90
+print("y {} x {} angle {}".format(y_m_d, x_m_d, m_angle))
+
+y_g_d = g_rect[1] - y
+x_g_d = g_rect[0] - x
+g_angle = math.atan2(y_g_d,x_g_d) * 360 / (2*math.pi)
+#g_angle =  g_angle - 90
+#g_angle = g_angle % 360
+g_angle = 360 - (-g_angle) + 90
+print("y {} x {} angle {}".format(y_g_d, x_g_d, g_angle))
 
 cv2.rectangle(masked_data, (g_rect[0], g_rect[1]), (g_rect[0]+10, g_rect[1]+10), (255, 0, 0), 3)
 cv2.rectangle(masked_data, (m_rect[0], m_rect[1]), (m_rect[0]+10, m_rect[1]+10), (255, 0, 0), 3)
