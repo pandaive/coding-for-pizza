@@ -11,7 +11,7 @@ import image_recognition
 import regulator
 
 local = False  # True
-subprocess_mqtt = False
+subprocess_mqtt = True
 
 imageToProcess = None
 
@@ -36,8 +36,8 @@ def thread_fn():
             threadIdle = False
             angle, im = image_recognition.get_angle(imageToProcess)
 
-            #cv2.imshow('VIDEO', im)
-            #cv2.waitKey(1)
+            cv2.imshow('VIDEO', im)
+            cv2.waitKey(1)
 
             x, direction = reg.update(angle)
 
@@ -84,7 +84,7 @@ if __name__ == "__main__":
 
     thread.start()
 
-    camera = cv2.VideoCapture("rtsp://service:!Hackath0n@192.168.0.2:554")
+    camera = cv2.VideoCapture("rtsp://hackathon:!Hackath0n@192.168.0.2:554")
     # camera = cv2.VideoCapture("/home/wiktor/hackathon/vlc-record-2019-09-14-15h21m18s-rtsp___192.168.0.2_554-.mp4")
 
     if client:

@@ -10,7 +10,7 @@ class AngleRegulator:
     target = 0
     direction = "stop"
 
-    delta = 20  # degrees
+    delta = 10  # degrees
 
     def __init__(self):
         maxSpeed = 1# 5
