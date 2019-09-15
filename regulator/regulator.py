@@ -6,9 +6,13 @@ import time
 class AngleRegulator:
     pid = PID(1/360 / 10, 0.1, 0.05, setpoint=0)
 
+    prediction = 10 # how many degrees engine rotates after we send stop signal
+
 
     target = 0
     direction = "stop"
+    homing_mode = True
+    workcycle_direction = "stop"
 
     delta = 20  # degrees
 
@@ -27,18 +31,20 @@ class AngleRegulator:
 
         direction_left = True
 
-        if (currentAngleDegrees > self.target):
-            direction_left = True
-        else:
-            direction_left = False
+        if self.homing_mode:
+            if (currentAngleDegrees > self.target):
+                direction_left = True
+            else:
+                direction_left = False
 
-        if (abs(currentAngleDegrees - self.target) > 180):
-            direction_left = not direction_left
-            currentAngleDegrees = currentAngleDegrees - 180
+        if self.homing_mode:
+            if (abs(currentAngleDegrees - self.target) > 180):
+                direction_left = not direction_left
+                currentAngleDegrees = currentAngleDegrees - 180
 
         print("Diff is {}".format(abs(currentAngleDegrees - self.target)))
 
-        if (abs(currentAngleDegrees - self.target) < self.delta):
+        if (abs(currentAngleDegrees + self.prediction - self.target) < self.delta):
             direction = "stop"
         elif direction_left:
             direction = "left"
@@ -48,6 +54,9 @@ class AngleRegulator:
         z = -currentAngleDegrees if currentAngleDegrees > self.target else currentAngleDegrees
 
         out = self.pid(z)
+
+        if not self.homing_mode:
+            direction = self.workcycle_direction
 
         return out, direction
 

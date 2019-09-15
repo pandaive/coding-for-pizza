@@ -153,8 +153,6 @@ def get_angle(img):
     cv2.rectangle(masked_data, (m_rect[0], m_rect[1]), (m_rect[0]+10, m_rect[1]+10), (255, 0, 0), 3)
     cv2.rectangle(masked_data, (w_rect[0], w_rect[1]), (w_rect[0]+10, w_rect[1]+10), (255, 0, 0), 3)
     #
-    # cv2.namedWindow("Color Tracking1")
-    # cv2.imshow("Color Tracking1", masked_data)
 
     # cv2.namedWindow("Color Tracking")
     # cv2.imshow("Color Tracking", masked_data)
