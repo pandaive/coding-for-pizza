@@ -79,6 +79,8 @@ circles_i = 0
 
 def get_angle(img):
     start = time.time()
+    height = np.size(img, 0)
+    width = np.size(img, 1)
     global circles_i
     #global max_circle
     #gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
@@ -103,7 +105,7 @@ def get_angle(img):
         circles.append((x, y, r))
         circles_i += 1
 
-    max_circle = (0, 0, 0)
+    max_circle = (int(width/2), int(height/2), int(height/2))
 
     cirles_max_len = 20
     if len(circles) > cirles_max_len:
@@ -154,9 +156,9 @@ def get_angle(img):
     # cv2.namedWindow("Color Tracking1")
     # cv2.imshow("Color Tracking1", masked_data)
 
-    #cv2.namedWindow("Color Tracking")
-    #cv2.imshow("Color Tracking", res)
-    #cv2.waitKey()
+    # cv2.namedWindow("Color Tracking")
+    # cv2.imshow("Color Tracking", masked_data)
+    # cv2.waitKey()
 
     end = time.time()
 
