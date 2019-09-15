@@ -1,6 +1,7 @@
 import numpy as np
 import cv2# as cv
 import math
+import time
 #import matplotlib.pyplot as plt
 
 
@@ -12,7 +13,7 @@ def findCircle(img):
 
     height = np.size(img, 0)
     width = np.size(img, 1)
-    dw = 300
+    dw = 200
     resized = cv2.resize(gray, (dw, int(dw/width * height)))
 
     coeff = width / dw
@@ -72,7 +73,14 @@ def findColor(img, lower, upper):
     return max_x, max_y
 
 
+
+circles = []
+circles_i = 0
+
 def get_angle(img):
+    start = time.time()
+    global circles_i
+    #global max_circle
     #gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
     #magenta_lower = np.array([22,60,200],np.uint8)
@@ -80,16 +88,37 @@ def get_angle(img):
     green_lower = np.array([50, 60, 60], np.uint8)
     green_upper = np.array([80, 150, 150], np.uint8)
 
-    magenta_lower = np.array([150, 100, 30],np.uint8)
-    magenta_upper = np.array([165, 500, 500],np.uint8)
+    magenta_lower = np.array([150, 100, 30], np.uint8)
+    magenta_upper = np.array([165, 500, 500], np.uint8)
 
 
     sens = 70
     white_lower = np.array([0,0,255-sens], np.uint8)
     white_upper = np.array([255,sens,255], np.uint8)
 
-    resized, circle = findCircle(img)
-    x, y, r = (int(x) for x in circle)
+    if len(circles) > 5 or circles_i % 30 == 0:
+        resized, circle = findCircle(img)
+        x, y, r = (int(x) for x in circle)
+
+        circles.append((x, y, r))
+        circles_i += 1
+
+    max_circle = (0, 0, 0)
+
+    cirles_max_len = 20
+    if len(circles) > cirles_max_len:
+        print("Popping {} values".format(len(circles) - cirles_max_len))
+        for i in range(len(circles) - cirles_max_len):
+            circles.pop(0)
+
+    for circle in circles:
+        x, y, r = circle
+        if r > max_circle[2]:
+            max_circle = (x,y,r)
+        else:
+            x, y, r = max_circle
+    print((x, y, r))
+    #x, y, r = ()
 
     height,width,depth = img.shape
     circle_img = np.zeros((height,width), np.uint8)
@@ -128,6 +157,10 @@ def get_angle(img):
     #cv2.namedWindow("Color Tracking")
     #cv2.imshow("Color Tracking", res)
     #cv2.waitKey()
+
+    end = time.time()
+
+    #print("get_angle {}".format(end - start))
 
     return g_angle - 180 - m_angle, masked_data
 

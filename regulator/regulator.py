@@ -10,7 +10,7 @@ class AngleRegulator:
     target = 0
     direction = "stop"
 
-    delta = 10  # degrees
+    delta = 20  # degrees
 
     def __init__(self):
         maxSpeed = 1# 5
@@ -27,7 +27,7 @@ class AngleRegulator:
 
         direction_left = True
 
-        if (currentAngleDegrees < self.target):
+        if (currentAngleDegrees > self.target):
             direction_left = True
         else:
             direction_left = False
@@ -35,6 +35,8 @@ class AngleRegulator:
         if (abs(currentAngleDegrees - self.target) > 180):
             direction_left = not direction_left
             currentAngleDegrees = currentAngleDegrees - 180
+
+        print("Diff is {}".format(abs(currentAngleDegrees - self.target)))
 
         if (abs(currentAngleDegrees - self.target) < self.delta):
             direction = "stop"
